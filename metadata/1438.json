@@ -1,0 +1,39 @@
+{
+  "name": "ABYSSORA #1438",
+  "description": "ABYSSORA is a journey into the mysterious depths of the ocean. 3,333 unique deep-ocean collectibles on BNB Chain.",
+  "image": "https://www.abyssora.fun/images/epic.svg",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Epic"
+    },
+    {
+      "trait_type": "Character",
+      "value": "Ancient Leviathan"
+    },
+    {
+      "trait_type": "Species",
+      "value": "great whale"
+    },
+    {
+      "trait_type": "Colour",
+      "value": "silver-blue"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "wise"
+    },
+    {
+      "trait_type": "Habitat",
+      "value": "open ocean"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "coral crown"
+    },
+    {
+      "trait_type": "Glow",
+      "value": "radiant glow"
+    }
+  ]
+}

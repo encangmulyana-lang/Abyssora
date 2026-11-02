@@ -1,0 +1,39 @@
+{
+  "name": "ABYSSORA #351",
+  "description": "ABYSSORA is a journey into the mysterious depths of the ocean. 3,333 unique deep-ocean collectibles on BNB Chain.",
+  "image": "https://www.abyssora.fun/images/mythic.svg",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Mythic"
+    },
+    {
+      "trait_type": "Character",
+      "value": "The Abyss Itself"
+    },
+    {
+      "trait_type": "Species",
+      "value": "abyss entity"
+    },
+    {
+      "trait_type": "Colour",
+      "value": "prismatic"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "starlit"
+    },
+    {
+      "trait_type": "Habitat",
+      "value": "the abyss"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "crown of light"
+    },
+    {
+      "trait_type": "Glow",
+      "value": "mythic aura"
+    }
+  ]
+}
