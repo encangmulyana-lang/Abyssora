@@ -78,7 +78,16 @@ nav{padding:12px 14px}nav b{font-size:14px;letter-spacing:.25em}nav a{display:no
 <button onclick="setMax()" style="width:auto;padding:0 18px">MAX</button>
 </div>
 <p id="total" style="font-family:system-ui;font-weight:700">Total: 0.0003 BNB</p>
-<p><button class="btn" disabled>MINT NFT — via Binance Agentic Wallet agent prompt (see mint section)</button></p>
+<p><button class="btn" onclick="copyPrompt()">COPY AGENT MINT PROMPT</button></p>
+<div class="card" style="text-align:left">
+<p><b>Mint with your agent — copy this prompt:</b></p>
+<pre id="agentPrompt" style="white-space:pre-wrap;word-break:break-all;font-family:system-ui;font-size:14px;line-height:1.6;color:#dbeafe">Mint 1 ABYSSORA NFT on BNB Smart Chain (chain 56) via Binance Agentic Wallet.
+Contract: 0xa02ADe90a75ADA08b04E04C7ABB3e4B072F42614 (Abyssora / ABYSSORA, ERC-721)
+Function: mint(uint256 quantity), selector 0xa0712d68
+Quantity: 1, Price: 0.0003 BNB (send exactly 0.0003 BNB with the mint call)
+Max: 10 per transaction, Supply: 3,333</pre>
+<p id="copyResult" class="muted"></p>
+</div>
 <p class="muted">Minting is via Binance Agentic Wallet only — no MetaMask, no WalletConnect, no simulated connection. After deploy, this section will carry the agent prompt with the real contract address and mint selector, exactly like our other collections.</p>
 <p id="txlog" class="muted">No transaction has been created from this page.</p>
 </div></section>
@@ -126,6 +135,7 @@ nav{padding:12px 14px}nav b{font-size:14px;letter-spacing:.25em}nav a{display:no
 <script>
 function chg(d){let q=parseInt(document.getElementById('qty').value)+d; if(q<1)q=1; if(q>10)q=10; document.getElementById('qty').value=q; document.getElementById('total').textContent='Total: '+(q*0.0003).toFixed(4)+' BNB';}
 function setMax(){document.getElementById('qty').value=10; document.getElementById('total').textContent='Total: 0.0030 BNB';}
+function copyPrompt(){const t=document.getElementById('agentPrompt').textContent; navigator.clipboard.writeText(t).then(()=>{document.getElementById('copyResult').textContent='✅ Prompt copied — paste it to your Binance Agentic Wallet agent.';}).catch(()=>{document.getElementById('copyResult').textContent='Copy failed — select the prompt text above manually.';});}
 function filterR(r,btn){document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('#gal .gcard').forEach(c=>{c.style.display=(r==='all'||c.dataset.r===r)?'':'none';});}
 window.addEventListener('scroll',()=>{const h=document.querySelector('.hero img'); if(h) h.style.transform='translateY('+window.scrollY*0.15+'px)';},{passive:true});
 </script>
