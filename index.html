@@ -66,7 +66,7 @@ nav{padding:12px 14px}nav b{font-size:14px;letter-spacing:.25em}nav a{display:no
 </div></div>
 
 <section id="mint"><h2>MINT ABYSSORA</h2>
-<p class="sub">Contract deployed and verified on-chain. Minting is LIVE since 23:59 WIB 2026-11-02. Mint via the Binance Agentic Wallet agent prompt — no browser wallet transaction is created from this page.</p>
+<p class="sub">Contract deployed and verified on-chain. Minting is LIVE since 23:59 WIB 2026-11-02. Connect your wallet and mint directly, or use the Binance Agentic Wallet agent prompt below.</p>
 <div class="card">
 <p><b>Collection:</b> ABYSSORA &nbsp;•&nbsp; <b>Price:</b> 0.0003 BNB &nbsp;•&nbsp; <b>Supply:</b> 3,333 NFTs &nbsp;•&nbsp; <b>Max:</b> 10 per transaction</p>
 <p><b>Minted:</b> 0 / 3,333 (at deploy) &nbsp;•&nbsp; <b>Remaining:</b> 3,333 &nbsp;•&nbsp; <b>Contract:</b> <code>0xa02ADe90a75ADA08b04E04C7ABB3e4B072F42614</code></p>
@@ -78,6 +78,8 @@ nav{padding:12px 14px}nav b{font-size:14px;letter-spacing:.25em}nav a{display:no
 <button onclick="setMax()" style="width:auto;padding:0 18px">MAX</button>
 </div>
 <p id="total" style="font-family:system-ui;font-weight:700">Total: 0.0003 BNB</p>
+<p><button class="btn" id="connectBtn" onclick="connectWallet()">CONNECT WALLET</button> <button class="btn btn2" id="mintBtn" onclick="mintNFT()" disabled>MINT NFT</button></p>
+<p id="walletStatus" class="muted">Wallet not connected. Works with Binance Wallet or any EVM wallet on BNB Chain.</p>
 <p><button class="btn" onclick="copyPrompt()">COPY AGENT MINT PROMPT</button></p>
 <div class="card" style="text-align:left">
 <p><b>Mint with your agent — copy this prompt:</b></p>
@@ -88,7 +90,7 @@ Quantity: 1, Price: 0.0003 BNB (send exactly 0.0003 BNB with the mint call)
 Max: 10 per transaction, Supply: 3,333</pre>
 <p id="copyResult" class="muted"></p>
 </div>
-<p class="muted">Minting is via Binance Agentic Wallet only — no MetaMask, no WalletConnect, no simulated connection. After deploy, this section will carry the agent prompt with the real contract address and mint selector, exactly like our other collections.</p>
+<p class="muted">Alternative: mint via the Binance Agentic Wallet agent prompt below — same contract, same price. No simulated connection, every transaction verifiable on BscScan.</p>
 <p id="txlog" class="muted">No transaction has been created from this page.</p>
 </div></section>
 
@@ -132,7 +134,40 @@ Max: 10 per transaction, Supply: 3,333</pre>
 <i>“THE DEEP IS CALLING.”</i><br><br>
 <small>© ABYSSORA. Binance Agentic Wallet only. No MetaMask, no WalletConnect.</small></footer>
 
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.17.0/dist/ethers.umd.min.js"></script>
 <script>
+let abySigner=null;
+async function connectWallet(){
+  const st=document.getElementById('walletStatus');
+  if(!window.ethereum){st.textContent='No browser wallet detected — install Binance Wallet (or another EVM wallet) and refresh.'; return;}
+  try{
+    const provider=new ethers.BrowserProvider(window.ethereum);
+    await provider.send('eth_requestAccounts',[]);
+    const net=await provider.getNetwork();
+    if(net.chainId!==56n){
+      try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x38'}]});}
+      catch(e){await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:'0x38',chainName:'BNB Smart Chain',nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18},rpcUrls:['https://bsc-dataseed.bnbchain.org'],blockExplorerUrls:['https://bscscan.com']}]});}
+    }
+    abySigner=await provider.getSigner();
+    const addr=await abySigner.getAddress();
+    st.textContent='Connected: '+addr.slice(0,6)+'…'+addr.slice(-4)+' (BNB Chain)';
+    document.getElementById('connectBtn').textContent='WALLET CONNECTED';
+    document.getElementById('mintBtn').disabled=false;
+  }catch(e){st.textContent='Connection failed: '+(e.message||e);}
+}
+async function mintNFT(){
+  const st=document.getElementById('walletStatus'); const log=document.getElementById('txlog');
+  if(!abySigner){st.textContent='Connect your wallet first.'; return;}
+  const qty=parseInt(document.getElementById('qty').value)||1;
+  try{
+    log.textContent='Waiting for wallet approval…';
+    const c=new ethers.Contract('0xa02ADe90a75ADA08b04E04C7ABB3e4B072F42614',['function mint(uint256 quantity) payable'],abySigner);
+    const tx=await c.mint(qty,{value:BigInt(qty)*300000000000000n});
+    log.textContent='Transaction sent: '+tx.hash+' — waiting for confirmation…';
+    await tx.wait();
+    log.innerHTML='✅ Minted '+qty+' ABYSSORA! <a href="https://bscscan.com/tx/'+tx.hash+'" target="_blank" rel="noopener">View on BscScan</a>';
+  }catch(e){log.textContent='Mint failed: '+(e.reason||e.message||e);}
+}
 function chg(d){let q=parseInt(document.getElementById('qty').value)+d; if(q<1)q=1; if(q>10)q=10; document.getElementById('qty').value=q; document.getElementById('total').textContent='Total: '+(q*0.0003).toFixed(4)+' BNB';}
 function setMax(){document.getElementById('qty').value=10; document.getElementById('total').textContent='Total: 0.0030 BNB';}
 function copyPrompt(){const t=document.getElementById('agentPrompt').textContent; navigator.clipboard.writeText(t).then(()=>{document.getElementById('copyResult').textContent='✅ Prompt copied — paste it to your Binance Agentic Wallet agent.';}).catch(()=>{document.getElementById('copyResult').textContent='Copy failed — select the prompt text above manually.';});}
