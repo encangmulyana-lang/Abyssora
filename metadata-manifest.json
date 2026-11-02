@@ -1,0 +1,13 @@
+{
+  "seed": 20261102,
+  "total": 3333,
+  "distribution": {
+    "Common": 1667,
+    "Uncommon": 833,
+    "Rare": 500,
+    "Epic": 200,
+    "Legendary": 100,
+    "Mythic": 33
+  },
+  "token1": "Common"
+}
