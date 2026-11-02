@@ -79,7 +79,7 @@ nav{padding:12px 14px}nav b{font-size:14px;letter-spacing:.25em}nav a{display:no
 </div>
 <p id="total" style="font-family:system-ui;font-weight:700">Total: 0.0003 BNB</p>
 <p><button class="btn" id="connectBtn" onclick="connectWallet()">CONNECT WALLET</button> <button class="btn btn2" id="mintBtn" onclick="mintNFT()" disabled>MINT NFT</button></p>
-<p id="walletStatus" class="muted">Wallet not connected. Works with Binance Wallet or any EVM wallet on BNB Chain.</p>
+<p id="walletStatus" class="muted">Wallet not connected. On a phone, open this site inside a wallet app browser (Binance / MetaMask / Trust Wallet) — a regular phone browser has no wallet to connect. Or use the agent prompt below.</p>
 <p><button class="btn" onclick="copyPrompt()">COPY AGENT MINT PROMPT</button></p>
 <div class="card" style="text-align:left">
 <p><b>Mint with your agent — copy this prompt:</b></p>
@@ -139,7 +139,7 @@ Max: 10 per transaction, Supply: 3,333</pre>
 let abySigner=null;
 async function connectWallet(){
   const st=document.getElementById('walletStatus');
-  if(!window.ethereum){st.textContent='No browser wallet detected — install Binance Wallet (or another EVM wallet) and refresh.'; return;}
+  if(!window.ethereum){st.textContent='No browser wallet detected in this browser. On a phone, open this site inside the Binance / MetaMask / Trust Wallet app browser instead — or use COPY AGENT MINT PROMPT below.'; return;}
   try{
     const provider=new ethers.BrowserProvider(window.ethereum);
     await provider.send('eth_requestAccounts',[]);
