@@ -1,0 +1,39 @@
+{
+  "name": "ABYSSORA #1605",
+  "description": "ABYSSORA is a journey into the mysterious depths of the ocean. 3,333 unique deep-ocean collectibles on BNB Chain.",
+  "image": "https://www.abyssora.fun/images/legendary.svg",
+  "attributes": [
+    {
+      "trait_type": "Tier",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Character",
+      "value": "Sunken Royalty"
+    },
+    {
+      "trait_type": "Species",
+      "value": "drowned royalty"
+    },
+    {
+      "trait_type": "Colour",
+      "value": "gold and cyan"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "piercing"
+    },
+    {
+      "trait_type": "Habitat",
+      "value": "ruined city"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "golden trident"
+    },
+    {
+      "trait_type": "Glow",
+      "value": "blazing glow"
+    }
+  ]
+}
