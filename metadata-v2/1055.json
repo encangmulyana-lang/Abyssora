@@ -1,0 +1,15 @@
+{
+  "name": "ABYSSORA #1055",
+  "description": "ABYSSORA is a journey into the deep-ocean civilization beneath the waves. Inspired by coral reefs, ancient leviathans, sunken royalty and the glowing abyss itself, each NFT is a clay friend from the forgotten deep. Deep-ocean edition: 6,666 friends on BNB Chain. Your first mint is free.",
+  "image": "https://www.abyssora.fun/images-v2/common.svg",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Character",
+      "value": "Reef Dweller"
+    }
+  ]
+}
