@@ -246,10 +246,10 @@ async function rpcCall(to,data){
   } return null;
 }
 const STR={
-en:{minted:(n,p)=>n+" of 6,666 minted ("+p+"%)",loading:"Loading live count…",noCount:"Could not load live count — check your connection and refresh.",comingSoon:"Contract coming soon — mint not open yet.",total:(q,t,f)=>"Total for "+q+": "+t+" BNB"+(f?" — FREE":"")},
-ja:{minted:(n,p)=>"6,666匹中"+n+"匹ミント済み（"+p+"%）",loading:"ライブカウントを読み込み中…",noCount:"ライブカウントを読み込めませんでした — 接続を確認して更新してください。",comingSoon:"コントラクトは近日公開 — ミントはまだ始まっていません。",total:(q,t,f)=>"合計（"+q+"匹）:"+t+" BNB"+(f?" — 無料":"")},
-zh:{minted:(n,p)=>"已铸造 "+n+" / 6,666（"+p+"%）",loading:"正在加载实时数量…",noCount:"无法加载实时数量——请检查网络并刷新。",comingSoon:"合约即将上线——铸造尚未开始。",total:(q,t,f)=>"总价（"+q+"只）:"+t+" BNB"+(f?"——免费":"")},
-ko:{minted:(n,p)=>"6,666개 중 "+n+"개 민팅됨 ("+p+"%)",loading:"실시간 수량 불러오는 중…",noCount:"실시간 수량을 불러올 수 없습니다 — 연결을 확인하고 새로고침하세요。",comingSoon:"컨트랙트 곧 공개 — 민팅이 아직 시작되지 않았습니다.",total:(q,t,f)=>"총액（"+q+"개）: "+t+" BNB"+(f?" — 무료":"")}
+en:{minted:(n,p)=>n+" of 6,666 minted ("+p+"%)",loading:"Loading live count…",noCount:"Could not load live count — check your connection and refresh.",comingSoon:"Contract coming soon — mint not open yet.",total:(q,t,f)=>"Total for "+q+": "+t+" BNB"+(f?" — FREE":""),txWalletFee:"Your wallet could not prepare this transaction (empty answer from the browser). Open this site inside your wallet app browser (MetaMask / Trust Wallet / Binance Wallet) and try again."},
+ja:{minted:(n,p)=>"6,666匹中"+n+"匹ミント済み（"+p+"%）",loading:"ライブカウントを読み込み中…",noCount:"ライブカウントを読み込めませんでした — 接続を確認して更新してください。",comingSoon:"コントラクトは近日公開 — ミントはまだ始まっていません。",total:(q,t,f)=>"合計（"+q+"匹）:"+t+" BNB"+(f?" — 無料":""),txWalletFee:"ウォレットがこの取引を準備できませんでした（ブラウザからの応答が空でした）。MetaMask / Trust Wallet / Binance Wallet のアプリ内ブラウザでこのサイトを開いて、もう一度お試しください。"},
+zh:{minted:(n,p)=>"已铸造 "+n+" / 6,666（"+p+"%）",loading:"正在加载实时数量…",noCount:"无法加载实时数量——请检查网络并刷新。",comingSoon:"合约即将上线——铸造尚未开始。",total:(q,t,f)=>"总价（"+q+"只）:"+t+" BNB"+(f?"——免费":""),txWalletFee:"您的钱包无法准备这笔交易（浏览器返回为空）。请在钱包应用内浏览器（MetaMask / Trust Wallet / Binance Wallet）中打开本网站，然后重试。"},
+ko:{minted:(n,p)=>"6,666개 중 "+n+"개 민팅됨 ("+p+"%)",loading:"실시간 수량 불러오는 중…",noCount:"실시간 수량을 불러올 수 없습니다 — 연결을 확인하고 새로고침하세요。",comingSoon:"컨트랙트 곧 공개 — 민팅이 아직 시작되지 않았습니다.",total:(q,t,f)=>"총액（"+q+"개）: "+t+" BNB"+(f?" — 무료":""),txWalletFee:"지갑이 이 거래를 준비하지 못했습니다(브라우저의 응답이 비어 있습니다). MetaMask / Trust Wallet / Binance Wallet 앱 내 브라우저에서 이 사이트를 열고 다시 시도해 주세요."}
 };
 let LANG="en";
 function setLang(l){ LANG=l; try{localStorage.setItem("abyssora-lang",l);}catch(e){} document.documentElement.lang=l==="zh"?"zh-CN":l; ["en","ja","zh","ko"].forEach(x=>{ const b=document.getElementById("lang"+x[0].toUpperCase()+x.slice(1)); if(b) b.classList.toggle("on",x===l); }); document.querySelectorAll("[data-en]").forEach(el=>{ if(el.id==="connectBtn"&&userAddr) return; const v=el.dataset[l]; if(v!==undefined) el.textContent=v; }); document.querySelectorAll("[data-en-html]").forEach(el=>{ const v=el.dataset[l+"Html"]; if(v!==undefined) el.innerHTML=v; }); refresh(); }
@@ -300,12 +300,12 @@ async function mintNow(){
     const res=await rpcCall(CONTRACT,data);
     const value=res?BigInt(res):0n;
     const iface=new ethers.Interface(["function mint(uint256 quantity)"]);
-    const tx=await signer.sendTransaction({to:CONTRACT,data:iface.encodeFunctionData("mint",[q]),value});
+    const tx=await sendTx({to:CONTRACT,data:iface.encodeFunctionData("mint",[q]),value},300000);
     document.getElementById("mintMsg").textContent="Transaction sent: "+tx.hash+" — waiting for confirmation…";
     await tx.wait();
     document.getElementById("mintMsg").textContent="Minted! Tx: "+tx.hash;
     refresh();
-  }catch(e){ document.getElementById("mintMsg").textContent="Mint failed: "+(e.reason||e.message||e); }
+  }catch(e){ document.getElementById("mintMsg").textContent="Mint failed: "+txErrMsg(e); }
 }
 document.getElementById("qty").addEventListener("input",()=>{updateCost();syncPrompt();});
 syncPrompt();
@@ -355,6 +355,21 @@ async function loadMarket(){
   if(!grid.children.length){ grid.innerHTML="<div class='mkt-note'>No listings yet — be the first to list your friend.</div>"; }
 }
 function noWalletMsgMkt(){ const m=document.getElementById("marketMsg"); m.className="warn"; m.textContent="No wallet found in this browser. To buy, open this site inside your wallet app browser (MetaMask / Trust Wallet / Binance Wallet), then tap CONNECT WALLET."; }
+async function rpcGasPrice(){
+  for(const url of RPCS){
+    try{ const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({jsonrpc:"2.0",id:1,method:"eth_gasPrice",params:[]})});
+      const j=await r.json(); if(j.result) return BigInt(j.result); }catch(e){}
+  } return 1000000000n;
+}
+function txErrMsg(e){
+  const m=(e&&e.message)||String(e||"");
+  if(m.indexOf("invalid BigNumberish")>=0||m.indexOf("value=null")>=0){ return STR[LANG].txWalletFee; }
+  return (e&&e.reason)||m;
+}
+async function sendTx(tx,gasLimit){
+  const gp=await rpcGasPrice();
+  return signer.sendTransaction({...tx,gasPrice:gp,gasLimit:BigInt(gasLimit)});
+}
 async function listNow(){
   if(!MARKET){ document.getElementById("marketMsg").textContent="Market coming soon."; return; }
   if(!window.ethereum){ noWalletMsgMkt(); return; }
@@ -375,16 +390,16 @@ async function listNow(){
     if(!approved){
       document.getElementById("marketMsg").textContent="Approving the market to hold your NFT first…";
       const ifaceA=new ethers.Interface(["function setApprovalForAll(address operator, bool approved)"]);
-      const txA=await signer.sendTransaction({to:CONTRACT,data:ifaceA.encodeFunctionData("setApprovalForAll",[MARKET,true])});
+      const txA=await sendTx({to:CONTRACT,data:ifaceA.encodeFunctionData("setApprovalForAll",[MARKET,true])},100000);
       await txA.wait();
     }
     const iface=new ethers.Interface(["function list(uint256 tokenId, uint256 price)"]);
-    const tx=await signer.sendTransaction({to:MARKET,data:iface.encodeFunctionData("list",[id,priceWei])});
+    const tx=await sendTx({to:MARKET,data:iface.encodeFunctionData("list",[id,priceWei])},300000);
     document.getElementById("marketMsg").textContent="Transaction sent: "+tx.hash+" — waiting for confirmation…";
     await tx.wait();
     document.getElementById("marketMsg").textContent="Listed! Tx: "+tx.hash;
     loadMarket();
-  }catch(e){ document.getElementById("marketMsg").textContent="List failed: "+(e.reason||e.message||e); }
+  }catch(e){ document.getElementById("marketMsg").textContent="List failed: "+txErrMsg(e); }
 }
 async function buyNow(id,priceWei){
   if(!MARKET) return;
@@ -392,12 +407,12 @@ async function buyNow(id,priceWei){
   if(!signer){ await connectWallet(); if(!signer) return; }
   try{
     const iface=new ethers.Interface(["function buy(uint256 tokenId)"]);
-    const tx=await signer.sendTransaction({to:MARKET,data:iface.encodeFunctionData("buy",[id]),value:BigInt(priceWei)});
+    const tx=await sendTx({to:MARKET,data:iface.encodeFunctionData("buy",[id]),value:BigInt(priceWei)},300000);
     document.getElementById("marketMsg").textContent="Transaction sent: "+tx.hash+" — waiting for confirmation…";
     await tx.wait();
     document.getElementById("marketMsg").textContent="Bought! Tx: "+tx.hash;
     loadMarket(); refresh();
-  }catch(e){ document.getElementById("marketMsg").textContent="Buy failed: "+(e.reason||e.message||e); }
+  }catch(e){ document.getElementById("marketMsg").textContent="Buy failed: "+txErrMsg(e); }
 }
 async function cancelNow(id){
   if(!MARKET) return;
@@ -405,12 +420,12 @@ async function cancelNow(id){
   if(!signer){ await connectWallet(); if(!signer) return; }
   try{
     const iface=new ethers.Interface(["function cancel(uint256 tokenId)"]);
-    const tx=await signer.sendTransaction({to:MARKET,data:iface.encodeFunctionData("cancel",[id])});
+    const tx=await sendTx({to:MARKET,data:iface.encodeFunctionData("cancel",[id])},200000);
     document.getElementById("marketMsg").textContent="Transaction sent: "+tx.hash+" — waiting for confirmation…";
     await tx.wait();
     document.getElementById("marketMsg").textContent="Listing cancelled — your NFT is back in your wallet. Tx: "+tx.hash;
     loadMarket();
-  }catch(e){ document.getElementById("marketMsg").textContent="Cancel failed: "+(e.reason||e.message||e); }
+  }catch(e){ document.getElementById("marketMsg").textContent="Cancel failed: "+txErrMsg(e); }
 }
 async function updatePriceNow(id){
   if(!MARKET) return;
@@ -423,12 +438,12 @@ async function updatePriceNow(id){
   if(priceWei<=0n){ document.getElementById("marketMsg").textContent="Enter a price above 0 BNB."; return; }
   try{
     const iface=new ethers.Interface(["function updatePrice(uint256 tokenId, uint256 newPrice)"]);
-    const tx=await signer.sendTransaction({to:MARKET,data:iface.encodeFunctionData("updatePrice",[id,priceWei])});
+    const tx=await sendTx({to:MARKET,data:iface.encodeFunctionData("updatePrice",[id,priceWei])},200000);
     document.getElementById("marketMsg").textContent="Transaction sent: "+tx.hash+" — waiting for confirmation…";
     await tx.wait();
     document.getElementById("marketMsg").textContent="Price updated! Tx: "+tx.hash;
     loadMarket();
-  }catch(e){ document.getElementById("marketMsg").textContent="Update price failed: "+(e.reason||e.message||e); }
+  }catch(e){ document.getElementById("marketMsg").textContent="Update price failed: "+txErrMsg(e); }
 }
 loadMarket();
 
