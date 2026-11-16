@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Forge — ABYSSORA Forge v3</title>
+<meta name="description" content="Forge your Abyssora friends: 3 Commons into 1 Uncommon, all the way to the 66 Mythics. First 100 forges gas-only, then 1,000 $ABY burns per forge.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+
+<div id="splash">
+  <div class="logo">ABYSS<b>O</b>RA</div>
+  <div class="tag" data-en="Clay friends from the deep — Forge v3" data-ja="深海からの粘土の友達 — Forge v3" data-zh="来自深海的粘土朋友 — Forge v3" data-ko="심해에서 온 클레이 친구들 — Forge v3">Clay friends from the deep — Forge v3</div>
+  <div class="row">
+    <button class="btn" id="splashEnter" data-en="ENTER THE DEEP" data-ja="深海へ入る" data-zh="进入深海" data-ko="심해로 들어가기">ENTER THE DEEP</button>
+    <button class="btn ghost" id="splashSkip" data-en="SKIP INTRO" data-ja="イントロをスキップ" data-zh="跳过介绍" data-ko="인트로 건너뛰기">SKIP INTRO</button>
+  </div>
+</div>
+
+<header>
+  <div class="bar">
+    <a class="logo" href="index.html">ABYSS<b>O</b>RA <span class="v3">v3</span></a>
+    <nav class="main">
+      <a href="index.html#collection" data-en="Collection" data-ja="コレクション" data-zh="藏品" data-ko="컬렉션">Collection</a>
+      <a href="forge.html" class="active" data-en="Forge" data-ja="フォージ" data-zh="熔炉" data-ko="포지">Forge</a>
+      <a href="claim.html" data-en="Claim $ABY" data-ja="$ABYを請求" data-zh="领取 $ABY" data-ko="$ABY 청구">Claim $ABY</a>
+      <a href="market.html" data-en="Market" data-ja="マーケット" data-zh="市场" data-ko="마켓">Market</a>
+      <a href="index.html#roadmap" data-en="Roadmap" data-ja="ロードマップ" data-zh="路线图" data-ko="ロード맵">Roadmap</a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="actions">
+      <button class="langbtn" id="langEn" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="langbtn" id="langJa" data-lang="ja" onclick="setLang('ja')">JA</button>
+      <button class="langbtn" id="langZh" data-lang="zh" onclick="setLang('zh')">ZH</button>
+      <button class="langbtn" id="langKo" data-lang="ko" onclick="setLang('ko')">KO</button>
+      <button class="themebtn" id="themeBtn" onclick="toggleTheme()">LIGHT</button>
+      <button class="btn small" id="connectBtn" onclick="connectWallet()" data-en="CONNECT WALLET" data-ja="ウォレット接続" data-zh="连接钱包" data-ko="지갑 연결">CONNECT WALLET</button>
+      <button id="burger" onclick="toggleMenu()" aria-label="Menu">☰</button>
+    </div>
+  </div>
+  <div id="mobileMenu">
+    <div class="mm-row">
+      <button class="langbtn" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="langbtn" data-lang="ja" onclick="setLang('ja')">JA</button>
+      <button class="langbtn" data-lang="zh" onclick="setLang('zh')">ZH</button>
+      <button class="langbtn" data-lang="ko" onclick="setLang('ko')">KO</button>
+      <button class="themebtn" onclick="toggleTheme()">LIGHT</button>
+    </div>
+    <a href="index.html#collection" data-en="Collection" data-ja="コレクション" data-zh="藏品" data-ko="컬렉션">Collection</a>
+    <a href="forge.html" class="active" data-en="Forge" data-ja="フォージ" data-zh="熔炉" data-ko="포지">Forge</a>
+    <a href="claim.html" data-en="Claim $ABY" data-ja="$ABYを請求" data-zh="领取 $ABY" data-ko="$ABY 청구">Claim $ABY</a>
+    <a href="market.html" data-en="Market" data-ja="マーケット" data-zh="市场" data-ko="마켓">Market</a>
+    <a href="index.html#roadmap" data-en="Roadmap" data-ja="ロードマップ" data-zh="路线图" data-ko="ロード맵">Roadmap</a>
+  </div>
+</header>
+
+<main class="wrap">
+<section>
+  <div class="label">The Forge</div>
+  <h2 data-en-html="BURN LOW.<br>FORGE <span class='coral'>HIGH.</span>" data-ja-html="低く燃やし、<br>高く<span class='coral'>鍛えよ。</span>" data-zh-html="低燃高锻，<br><span class='coral'>成就传奇。</span>" data-ko-html="낮게 태우고,<br>높게 <span class='coral'>단련하세요.</span>">BURN LOW.<br>FORGE <span class="coral">HIGH.</span></h2>
+  <p class="muted" data-en="Pick friends of the same tier and burn them into one friend of the next tier. Forged friends are minted fresh with new token IDs — and they can claim their own 10,000 $ABY afterwards. Mythic cannot be forged further. Only 66 Mythics will ever exist." data-ja="同じティアの友達を選んで、次のティアの友達1匹にバーンして鍛造。鍛造された友達は新しいトークンIDでミントされ、その後自分の10,000 $ABYを請求できます。ミシックはそれ以上鍛造できません。ミシックは66匹のみ。" data-zh="选择相同等级的朋友，燃烧它们锻造出一位更高等级的朋友。锻造出的朋友以全新代币 ID 铸造，之后还可以领取自己的 10,000 $ABY。神话无法继续锻造。神话仅有 66 位。" data-ko="같은 티어의 친구를 선택해 다음 티어의 친구 하나로 소각해 단련하세요. 단련된 친구는 새 토큰 ID로 민팅되며 이후 자신의 10,000 $ABY를 청구할 수 있습니다. 미씩은 더 단련할 수 없습니다. 미씩은 단 66개만 존재합니다.">Pick friends of the same tier and burn them into one friend of the next tier. Forged friends are minted fresh with new token IDs — and they can claim their own 10,000 $ABY afterwards. Mythic cannot be forged further. Only 66 Mythics will ever exist.</p>
+
+  <div class="stats-band reveal" style="margin-top:28px">
+    <div class="stat-line"><b id="forgeCount">—</b><span data-en="Forges so far" data-ja="これまでのフォージ回数" data-zh="迄今锻造次数" data-ko="지금까지 포지 횟수">Forges so far</span></div>
+    <div class="stat-line"><b id="forgeFee">—</b><span data-en="Forge fee now" data-ja="現在のフォージ手数料" data-zh="当前锻造费用" data-ko="현재 포지 수수료">Forge fee now</span></div>
+    <div class="stat-line"><b id="abyBal">—</b><span data-en="Your $ABY balance" data-ja="あなたの $ABY 残高" data-zh="你的 $ABY 余额" data-ko="내 $ABY 잔액">Your $ABY balance</span></div>
+  </div>
+
+  <div style="height:28px"></div>
+  <div class="recipe-grid reveal">
+    <div class="recipe"><div class="in">3 × Common</div><div class="arrow">↓</div><div class="out">1 × Uncommon</div><div class="fee">Tide Guardian</div></div>
+    <div class="recipe"><div class="in">2 × Uncommon</div><div class="arrow">↓</div><div class="out">1 × Rare</div><div class="fee">Abyss Hunter</div></div>
+    <div class="recipe"><div class="in">2 × Rare</div><div class="arrow">↓</div><div class="out">1 × Epic</div><div class="fee">Ancient Leviathan</div></div>
+    <div class="recipe"><div class="in">2 × Epic</div><div class="arrow">↓</div><div class="out">1 × Legendary</div><div class="fee">Sunken Royalty</div></div>
+    <div class="recipe"><div class="in">2 × Legendary</div><div class="arrow">↓</div><div class="out">1 × Mythic</div><div class="fee">The Abyss Itself</div></div>
+  </div>
+
+  <div style="height:32px"></div>
+  <button class="btn" id="scanBtn" onclick="scanForge()" data-en="SHOW MY FRIENDS" data-ja="友達を表示" data-zh="显示我的朋友" data-ko="내 친구 표시">SHOW MY FRIENDS</button>
+  <div id="pageMsg" class="msg"></div>
+  <div class="warn" data-en="No browser wallet? Open this site inside your wallet app browser (MetaMask / Trust Wallet / Binance Wallet) and tap CONNECT WALLET. Claim your $ABY on the claim page first — after the first 100 forges, each forge burns 1,000 $ABY, and the site will ask you to approve that spend once." data-ja="ブラウザウォレットがありませんか？MetaMask / Trust Wallet / Binance Wallet のアプリ内ブラウザでこのサイトを開き、CONNECT WALLET をタップしてください。まず請求ページで $ABY を請求してください — 最初の100回のフォージの後、1回のフォージで1,000 $ABYをバーンし、その支出の承認を1回求められます。" data-zh="没有浏览器钱包？请在钱包应用内浏览器（MetaMask / Trust Wallet / Binance Wallet）中打开本网站，然后点击 CONNECT WALLET。请先在领取页面领取 $ABY——前 100 次锻造之后，每次锻造燃烧 1,000 $ABY，网站会要求你一次性批准这笔支出。" data-ko="브라우저 지갑이 없나요? MetaMask / Trust Wallet / Binance Wallet 앱 내 브라우저에서 이 사이트를 열고 CONNECT WALLET을 누르세요. 먼저 청구 페이지에서 $ABY를 청구하세요 — 처음 100번의 포지 이후 포지마다 1,000 $ABY가 소각되며, 사이트에서 해당 지출 승인을 한 번 요청합니다.">No browser wallet? Open this site inside your wallet app browser (MetaMask / Trust Wallet / Binance Wallet) and tap CONNECT WALLET. Claim your $ABY on the claim page first — after the first 100 forges, each forge burns 1,000 $ABY, and the site will ask you to approve that spend once.</div>
+
+  <div id="forgeList"></div>
+  <div id="forgeBox" style="display:none">
+    <div class="note" id="forgePreview">—</div>
+    <div class="field">
+      <button class="btn ghost" id="approveBtn" onclick="approveAby()" style="display:none" data-en="1 — APPROVE 1,000 $ABY" data-ja="1 — 1,000 $ABYを承認" data-zh="1 — 批准 1,000 $ABY" data-ko="1 — 1,000 $ABY 승인">1 — APPROVE 1,000 $ABY</button>
+      <button class="btn coral" id="forgeBtn" onclick="forgeNow()" data-en="2 — FORGE" data-ja="2 — フォージ" data-zh="2 — 锻造" data-ko="2 — 포지">2 — FORGE</button>
+    </div>
+  </div>
+  <div id="forgeMsg" class="msg"></div>
+</section>
+</main>
+
+<footer>
+  <div class="flogo">ABYSS<b>O</b>RA</div>
+  <p data-en="Clay friends from the deep · BNB Chain · Forge v3" data-ja="深海からの粘土の友達 · BNBチェーン · Forge v3" data-zh="来自深海的粘土朋友 · BNB 链 · Forge v3" data-ko="심해에서 온 클레이 친구들 · BNB 체인 · Forge v3">Clay friends from the deep · BNB Chain · Forge v3</p>
+  <div class="links">
+    <a href="https://x.com/abyssora__" target="_blank">@abyssora__</a>
+    <a href="index.html">Home</a>
+    <a href="claim.html">Claim $ABY</a>
+    <a href="market.html">Market</a>
+  </div>
+  <p class="muted" style="margin-top:22px;font-size:12px">Contract: <span id="contractFoot">0x0000000000000000000000000000000000000000</span><br>
+  <span data-en="The forge opens after the v3 contracts deploy." data-ja="フォージは v3 コントラクトのデプロイ後に開きます。" data-zh="熔炉在 v3 合约部署后开启。" data-ko="포지는 v3 컨트랙트 배포 후에 열립니다.">The forge opens after the v3 contracts deploy.</span></p>
+</footer>
+
+<button id="toTop" aria-label="Back to top">↑</button>
+
+<script src="shared.js"></script>
+<script>
+/* Forge page. Recipes: 3 Common -> 1 Uncommon, 2 Uncommon -> 1 Rare,
+   2 Rare -> 1 Epic, 2 Epic -> 1 Legendary, 2 Legendary -> 1 Mythic.
+   First 100 forges gas-only; after that forgeFee() = 1,000 $ABY, paid via
+   transferFrom — the NFT contract must be approved to spend your $ABY.
+   Placeholder-safe: nothing on-chain runs until v3 deploys. */
+const TIERS = [
+  {name:"Reef Dweller",     rarity:"Common",    img:"images/common.webp",    color:"#e8e8e8"},
+  {name:"Tide Guardian",    rarity:"Uncommon",  img:"images/uncommon.webp",  color:"#7ddf8e"},
+  {name:"Abyss Hunter",     rarity:"Rare",      img:"images/rare.webp",      color:"#35e0c8"},
+  {name:"Ancient Leviathan",rarity:"Epic",      img:"images/epic.webp",      color:"#4ec9e1"},
+  {name:"Sunken Royalty",   rarity:"Legendary", img:"images/legendary.webp", color:"#b388ff"},
+  {name:"The Abyss Itself", rarity:"Mythic",    img:"images/mythic.webp",    color:"#ffb347"}
+];
+const NEED = [3, 2, 2, 2, 2]; /* inputs per tier; Mythic (5) cannot forge */
+let owned = []; /* {id, tier} */
+let selected = new Set();
+let curFee = 0n;
+
+async function refresh(){
+  if(IS_PLACEHOLDER){
+    document.getElementById("forgeCount").textContent = "—";
+    document.getElementById("forgeFee").textContent = "—";
+    document.getElementById("abyBal").textContent = "—";
+    return;
+  }
+  const fr = await rpcCall(CONTRACT, SEL_FORGECOUNT);
+  if(fr) document.getElementById("forgeCount").textContent = parseInt(fr, 16).toString();
+  const fe = await rpcCall(CONTRACT, SEL_FORGEFEE);
+  if(fe){
+    curFee = BigInt(fe);
+    document.getElementById("forgeFee").textContent = curFee === 0n ? "FREE" : "1,000 $ABY";
+  }
+  if(userAddr){
+    const b = await rpcCall(ABY_TOKEN, SEL_BALANCEOF + userAddr.slice(2).padStart(64,"0"));
+    if(b) document.getElementById("abyBal").textContent = (Number(BigInt(b)) / 1e18).toLocaleString() + " $ABY";
+  }
+}
+async function onConnect(){ refresh(); scanForge(); }
+
+async function scanForge(){
+  const msg = document.getElementById("pageMsg"), list = document.getElementById("forgeList");
+  if(IS_PLACEHOLDER || DEPLOY_BLOCK === 0){
+    msg.className = "warn"; msg.textContent = STR[LANG].comingSoon;
+    list.innerHTML = "";
+    return;
+  }
+  if(!signer){ const ok = await connectWallet(); if(!ok) return; }
+  msg.className = ""; msg.textContent = "Scanning your friends…";
+  list.innerHTML = "";
+  try{
+    const rp = new ethers.JsonRpcProvider(RPCS[0]);
+    const padded = "0x" + userAddr.slice(2).padStart(64, "0");
+    const found = new Set();
+    const latest = await rp.getBlockNumber();
+    for(let from = DEPLOY_BLOCK; from <= latest; from += 10000){
+      const to = Math.min(from + 9999, latest);
+      let logs;
+      try{ logs = await rp.getLogs({address:CONTRACT, fromBlock:from, toBlock:to, topics:[TRANSFER_TOPIC, null, padded]}); }
+      catch(e){ const rp2 = new ethers.JsonRpcProvider(RPCS[1]); logs = await rp2.getLogs({address:CONTRACT, fromBlock:from, toBlock:to, topics:[TRANSFER_TOPIC, null, padded]}); }
+      logs.forEach(l=>found.add(BigInt(l.topics[3]).toString()));
+    }
+    owned = [];
+    for(const id of found){
+      const ores = await rpcCall(CONTRACT, SEL_OWNEROF + BigInt(id).toString(16).padStart(64,"0"));
+      if(!ores) continue;
+      const owner = ethers.AbiCoder.defaultAbiCoder().decode(["address"], ores)[0];
+      if(owner.toLowerCase() !== userAddr.toLowerCase()) continue;
+      const tres = await rpcCall(CONTRACT, SEL_TIEROF + BigInt(id).toString(16).padStart(64,"0"));
+      const tier = tres ? parseInt(tres, 16) : 0;
+      owned.push({id: Number(id), tier});
+    }
+    owned.sort((a,b)=> a.tier - b.tier || a.id - b.id);
+    renderForgeList();
+    msg.textContent = owned.length ? owned.length + " friend(s) in your wallet. Tap friends of the same tier to forge." : "No friends in this wallet yet — mint first.";
+  }catch(e){ msg.className = "warn"; msg.textContent = "Scan failed: " + txErrMsg(e); }
+}
+function renderForgeList(){
+  const list = document.getElementById("forgeList");
+  selected = new Set();
+  if(!owned.length){ list.innerHTML = ""; document.getElementById("forgeBox").style.display = "none"; return; }
+  list.innerHTML = '<div class="picker-grid">' + owned.map(o=>{
+    const t = TIERS[o.tier];
+    return '<div class="pick" data-id="'+o.id+'" data-tier="'+o.tier+'" onclick="toggleForgePick('+o.id+',this)"><span class="chk">✓</span><img src="'+t.img+'" alt="'+t.name+'"><div class="pid">ABYSSORA #'+o.id+'<br><span style="color:'+t.color+'">'+t.rarity+' — '+t.name+'</span></div></div>';
+  }).join("") + "</div>";
+  document.getElementById("forgeBox").style.display = "block";
+  updateForgePreview();
+}
+function toggleForgePick(id, el){
+  if(selected.has(id)){ selected.delete(id); el.classList.remove("sel"); }
+  else { selected.add(id); el.classList.add("sel"); }
+  updateForgePreview();
+}
+function forgeTarget(){
+  /* returns {tier, need, ok, reason} for the current selection */
+  const ids = [...selected];
+  if(!ids.length) return {ok:false, reason:"Select friends of the same tier to forge."};
+  const tiers = ids.map(id=>owned.find(o=>o.id === id).tier);
+  if(new Set(tiers).size !== 1) return {ok:false, reason:"All inputs must be the same tier."};
+  const tier = tiers[0];
+  if(tier >= 5) return {ok:false, reason:"Mythic cannot be forged further."};
+  const need = NEED[tier];
+  if(ids.length !== need) return {ok:false, reason:"This recipe needs " + need + " × " + TIERS[tier].rarity + " — you selected " + ids.length + "."};
+  return {ok:true, tier, need};
+}
+function updateForgePreview(){
+  const p = document.getElementById("forgePreview");
+  const t = forgeTarget();
+  if(!t.ok){ p.textContent = t.reason; document.getElementById("approveBtn").style.display = "none"; return; }
+  p.innerHTML = "Forge " + t.need + " × " + TIERS[t.tier].rarity + " " + TIERS[t.tier].name +
+    " → 1 × " + TIERS[t.tier + 1].rarity + " " + TIERS[t.tier + 1].name +
+    " · Fee: " + (curFee === 0n ? "FREE (first 100 forges gas-only)" : "1,000 $ABY burned");
+  checkAllowance();
+}
+async function checkAllowance(){
+  const btn = document.getElementById("approveBtn");
+  if(IS_PLACEHOLDER || curFee === 0n || !userAddr){ btn.style.display = "none"; return; }
+  const res = await rpcCall(ABY_TOKEN, SEL_ALLOWANCE + userAddr.slice(2).padStart(64,"0") + CONTRACT.slice(2).padStart(64,"0"));
+  const allow = res ? BigInt(res) : 0n;
+  btn.style.display = allow >= curFee ? "none" : "inline-block";
+}
+async function approveAby(){
+  const msg = document.getElementById("forgeMsg");
+  if(IS_PLACEHOLDER){ msg.className = "warn"; msg.textContent = STR[LANG].comingSoon; return; }
+  if(!signer){ const ok = await connectWallet(); if(!ok) return; }
+  try{
+    const iface = new ethers.Interface(["function approve(address spender, uint256 amount)"]);
+    const tx = await sendTx({to:ABY_TOKEN, data:iface.encodeFunctionData("approve",[CONTRACT, curFee])}, 100000);
+    msg.className = ""; msg.textContent = "Approval sent: " + tx.hash + " — waiting for confirmation…";
+    await tx.wait();
+    msg.textContent = "Approved 1,000 $ABY for the forge. Now tap FORGE.";
+    checkAllowance();
+  }catch(e){ msg.className = "warn"; msg.textContent = "Approve failed: " + txErrMsg(e); }
+}
+async function forgeNow(){
+  const msg = document.getElementById("forgeMsg");
+  if(IS_PLACEHOLDER){ msg.className = "warn"; msg.textContent = STR[LANG].comingSoon; return; }
+  const t = forgeTarget();
+  if(!t.ok){ msg.className = "warn"; msg.textContent = t.reason; return; }
+  if(!signer){ const ok = await connectWallet(); if(!ok) return; }
+  try{
+    if(curFee > 0n){
+      const res = await rpcCall(ABY_TOKEN, SEL_ALLOWANCE + userAddr.slice(2).padStart(64,"0") + CONTRACT.slice(2).padStart(64,"0"));
+      const allow = res ? BigInt(res) : 0n;
+      if(allow < curFee){ msg.className = "warn"; msg.textContent = "Approve 1,000 $ABY first (button 1 above)."; return; }
+    }
+    const iface = new ethers.Interface(["function forge(uint256[] tokenIds)"]);
+    const tx = await sendTx({to:CONTRACT, data:iface.encodeFunctionData("forge",[[...selected]])}, 400000);
+    msg.className = ""; msg.textContent = "Forge sent: " + tx.hash + " — waiting for confirmation…";
+    await tx.wait();
+    msg.textContent = "Forged! Your new " + TIERS[t.tier + 1].rarity + " friend is minted. Tx: " + tx.hash;
+    refresh(); scanForge();
+  }catch(e){ msg.className = "warn"; msg.textContent = "Forge failed: " + txErrMsg(e); }
+}
+initTheme(); initLang(); initSplash(); initChrome();
+refresh();
+</script>
+</body>
+</html>
